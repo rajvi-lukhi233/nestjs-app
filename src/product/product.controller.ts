@@ -9,9 +9,6 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
-  FileTypeValidator,
-  MaxFileSizeValidator,
-  ParseFilePipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductService } from './product.service';
@@ -22,11 +19,6 @@ import { Role } from 'src/user/user.type';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { productImageMulterOptions } from './multer.config';
-
-const imageFileValidators = [
-  new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
-  new FileTypeValidator({ fileType: /^image\/(jpeg|jpg|png|gif|webp)$/ }),
-];
 
 @Controller('products')
 export class ProductController {
@@ -66,12 +58,7 @@ export class ProductController {
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateProductDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        fileIsRequired: false,
-        validators: imageFileValidators,
-      }),
-    )
+    @UploadedFile()
     file: Express.Multer.File | undefined,
   ) {
     const updatedProduct = await this.productService.update(id, dto, file);
