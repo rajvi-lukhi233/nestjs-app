@@ -41,19 +41,22 @@ export class ProductController {
     @UploadedFile()
     file: Express.Multer.File,
   ) {
-    return this.productService.create(dto, file);
+    const addProduct = await this.productService.create(dto, file);
+    return { message: 'Product created successfully', data: addProduct };
   }
 
   @Get()
   @UseGuards(AuthGuard)
-  findAll() {
-    return this.productService.findAll();
+  async findAll() {
+    const products = await this.productService.findAll();
+    return { message: 'Products reteive successfully', data: products };
   }
 
   @Get(':id')
   @UseGuards(AuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.productService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const product = await this.productService.findOne(id);
+    return { message: 'Product reteive successfully', data: product };
   }
 
   @Patch(':id')
@@ -71,13 +74,15 @@ export class ProductController {
     )
     file: Express.Multer.File | undefined,
   ) {
-    return this.productService.update(id, dto, file);
+    const updatedProduct = await this.productService.update(id, dto, file);
+    return { message: 'Product updated successfully', data: updatedProduct };
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.Admin)
-  remove(@Param('id') id: string) {
-    return this.productService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.productService.remove(id);
+    return { message: 'Product deleted successfully' };
   }
 }

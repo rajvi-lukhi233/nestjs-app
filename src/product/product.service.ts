@@ -34,17 +34,11 @@ export class ProductService {
   }
 
   async create(dto: CreateProductDto, file: Express.Multer.File) {
-    const image = file.filename;
-    const created = await this.productModel.create({ ...dto, image });
-    return { message: 'Product created successfully', data: created };
+    return this.productModel.create({ ...dto, image: file.filename });
   }
 
   async findAll() {
-    const products = await this.productModel.find().sort({ createdAt: -1 });
-    return {
-      message: 'All products retrive successfully',
-      data: products.map((p) => this.toResponse(p)),
-    };
+    return this.productModel.find().sort({ createdAt: -1 });
   }
 
   async findOne(id: string) {
@@ -52,10 +46,7 @@ export class ProductService {
     if (!product) {
       throw new NotFoundException('Product not found');
     }
-    return {
-      message: 'Product retrive successfully',
-      data: this.toResponse(product),
-    };
+    return this.toResponse(product);
   }
 
   async update(
@@ -72,17 +63,13 @@ export class ProductService {
       await this.removeImageFile(existing.image);
       image = file.filename;
     }
-    const updated = await this.productModel
+    return await this.productModel
       .findByIdAndUpdate(
         id,
         { ...dto, image },
         { new: true, runValidators: true },
       )
       .exec();
-    if (!updated) {
-      throw new NotFoundException('Product not found');
-    }
-    return { message: 'Product updated successfully', data: updated };
   }
 
   async remove(id: string) {
@@ -91,6 +78,5 @@ export class ProductService {
       throw new NotFoundException('Product not found');
     }
     await this.removeImageFile(product.image);
-    return { message: 'Producct delete successfully' };
   }
 }
