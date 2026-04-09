@@ -4,7 +4,7 @@ import { AuthController } from './auth.controller';
 import { UserModule } from 'src/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { RedisModule } from 'src/redis/redis.module';
-import { EmailModule } from 'src/utils/email/email.module';
+import { EmailModule } from 'src/email/email.module';
 import { AuthGuard } from './auth.guard';
 
 @Module({

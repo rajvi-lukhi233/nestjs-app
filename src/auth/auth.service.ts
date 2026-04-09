@@ -11,7 +11,7 @@ import bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { loginDto } from './dto/login.dto';
 import { RedisService } from 'src/redis/redis.service';
-import { EmailService } from 'src/utils/email/email.service';
+import { EmailService } from 'src/email/email.service';
 import crypto from 'crypto';
 import { verifyOtpDto } from './dto/verifyOtp.dto';
 import { forgotPassDto } from './dto/forgotPass.dto';
@@ -39,10 +39,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid email');
     }
-    const comparePass = await bcrypt.compare(
-      dto.password,
-      user.password,
-    );
+    const comparePass = await bcrypt.compare(dto.password, user.password);
     if (!comparePass) {
       throw new UnauthorizedException('Invalid password');
     }
@@ -62,7 +59,11 @@ export class AuthService {
 
     await this.redisService.set(`otp:${user._id}`, otp, 300);
 
-    await this.emailService.sendEmail(email, 'Reset Password OTP', otp);
+    await this.emailService.sendEmail({
+      to: email,
+      subject: 'Reset Password OTP',
+      otp,
+    });
 
     return { message: 'OTP sent successfully', data: null };
   }
