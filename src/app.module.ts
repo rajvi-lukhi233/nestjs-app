@@ -6,8 +6,11 @@ import { RedisModule } from './redis/redis.module';
 import { EmailModule } from './email/email.module';
 import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
-import { ReadPdfController } from './streaming/streamingFile.controller';
 import { BullModule } from '@nestjs/bullmq';
+import { ChatModule } from './chat/chat.module';
+import { GroupModule } from './group/group.module';
+import { ChatRoomModule } from './chat-room/chat-room.module';
+import { ReadPdfController } from './streaming/streamingFile.controller';
 
 @Module({
   imports: [
@@ -24,6 +27,9 @@ import { BullModule } from '@nestjs/bullmq';
         port: Number(process.env.REDIS_PORT) || 6379,
       },
     }),
+    ChatModule,
+    GroupModule,
+    ChatRoomModule,
   ],
   controllers: [ReadPdfController],
 })
