@@ -4,6 +4,7 @@ import { registerDto } from './dto/register.dto';
 import { loginDto } from './dto/login.dto';
 import { verifyOtpDto } from './dto/verifyOtp.dto';
 import { forgotPassDto } from './dto/forgotPass.dto';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
@@ -13,6 +14,7 @@ export class AuthController {
     return await this.authService.registerUser(dto);
   }
 
+  @Throttle({ default: { limit: 5, ttl: 60 } })
   @Post('login')
   async login(@Body() dto: loginDto) {
     return await this.authService.loginUser(dto);

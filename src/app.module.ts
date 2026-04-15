@@ -11,9 +11,23 @@ import { ChatModule } from './chat/chat.module';
 import { GroupModule } from './group/group.module';
 import { ChatRoomModule } from './chat-room/chat-room.module';
 import { ReadPdfController } from './streaming/streamingFile.controller';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        name: 'default',
+        ttl: 60000,
+        limit: 100,
+      },
+      {
+        name: 'auth',
+        ttl: 60000,
+        limit: 5,
+      },
+    ]),
     AuthModule,
     UserModule,
     ProductModule,
@@ -31,6 +45,7 @@ import { ReadPdfController } from './streaming/streamingFile.controller';
     GroupModule,
     ChatRoomModule,
   ],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
   controllers: [ReadPdfController],
 })
 export class AppModule {}

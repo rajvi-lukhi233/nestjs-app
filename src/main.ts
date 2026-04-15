@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -14,6 +15,7 @@ async function bootstrap() {
     }),
   );
   app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/uploads/' });
+  app.use(helmet());
   app.enableCors();
   await app.listen(process.env.PORT ?? 3000);
 }

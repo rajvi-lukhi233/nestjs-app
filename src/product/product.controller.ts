@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   UploadedFile,
+  UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -19,6 +20,7 @@ import { Role } from 'src/user/user.type';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { productImageMulterOptions } from './multer.config';
+import { HttpExceptionFilter } from 'src/filter/http-exception/http-exception.filter';
 
 @Controller('products')
 export class ProductController {
@@ -46,6 +48,7 @@ export class ProductController {
 
   @Get(':id')
   @UseGuards(AuthGuard)
+  @UseFilters(HttpExceptionFilter)
   async findOne(@Param('id') id: string) {
     const product = await this.productService.findOne(id);
     return { message: 'Product reteive successfully', data: product };
